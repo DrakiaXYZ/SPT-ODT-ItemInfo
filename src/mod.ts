@@ -637,7 +637,7 @@ class ItemInfo implements IPostDBLoadMod {
 				// let RarityPvE = item._props.RarityPvE
 				// log(`${this.getItemName(itemID)} | ${RarityPvE}`)
 				let isBanned = false
-				if (config.useBSGStaticFleaBanlist) {
+				if (config.useBSGStaticFleaBanlist.enabled) {
 					isBanned = bsgBlacklist.includes(itemID)
 				} else {
 					isBanned = !item._props.CanSellOnRagfair
@@ -984,7 +984,7 @@ Weight: ${ammoProps.Weight}
 				if (config.HeadsetInfo.enabled) {
 					if (item._props.Distortion !== undefined) {
 						const gain = item._props.CompressorGain
-						const thresh = item._props.CompressorTreshold
+						const thresh = item._props.CompressorThreshold
 						// prettier-ignore
 						// headsetDescription = `${i18n.AmbientVolume}: ${item._props.AmbientCompressorSendLevel+10}dB | ${i18n.Compressor}: ${i18n.Gain} +${gain}dB × ${i18n.Treshold} ${thresh}dB ≈ ×${Math.abs((gain * (thresh+20)) / 10)} ${i18n.Boost} | ${i18n.ResonanceFilter}: ${item._props.HighpassResonance}@${item._props.HighpassFreq}Hz | ${i18n.Distortion}: ${Math.round(item._props.Distortion * 100)}%` + newLine + newLine;
 						headsetDescription = `${i18n.AmbientVolume}: ${Math.round(((item._props as any).AmbientCompressorSendLevel+10 + (item._props as any).EnvCommonCompressorSendLevel+7 + (item._props as any).EnvNatureCompressorSendLevel+5 + (item._props as any).EnvTechnicalCompressorSendLevel+7) * 10)/10}dB | ${i18n.Boost}: +${((gain + Math.abs(thresh+20)))}dB${item._props.Distortion ? ` | ${i18n.Distortion}: ${Math.round(item._props.Distortion * 100)}%` : ""}${newLine + newLine}`;

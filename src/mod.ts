@@ -6,7 +6,7 @@
 import { DependencyContainer } from "tsyringe"
 
 import { ConfigTypes } from "@spt/models/enums/ConfigTypes"
-import { IPostDBLoadMod } from "@spt/models/external/IPostDBLoadMod"
+import { IPostSptLoadMod } from "@spt/models/external/IPostSptLoadMod"
 import { IHideoutConfig } from "@spt/models/spt/config/IHideoutConfig"
 import { IRagfairConfig } from "@spt/models/spt/config/IRagfairConfig"
 import { LogBackgroundColor } from "@spt/models/spt/logging/LogBackgroundColor"
@@ -389,7 +389,7 @@ const bsgBlacklist = [
 	"67124dcfa3541f2a1f0e788b", // MPS Auto Assault-12 Gen 2 12ga automatic shotgun
 ]
 
-class ItemInfo implements IPostDBLoadMod {
+class ItemInfo implements IPostSptLoadMod {
 	database: DatabaseServer
 	configServer: ConfigServer
 	itemBaseClassService: ItemBaseClassService
@@ -448,7 +448,7 @@ class ItemInfo implements IPostDBLoadMod {
 		]
 	}
 
-	public postDBLoad(container: DependencyContainer) {
+	public postSptLoad(container: DependencyContainer) {
 		this.logger = container.resolve<ILogger>("WinstonLogger")
 
 		// TODO: With order.json being a thing, this can probably be removed and instead instructions for changing load order could be added
@@ -637,7 +637,7 @@ class ItemInfo implements IPostDBLoadMod {
 				// let RarityPvE = item._props.RarityPvE
 				// log(`${this.getItemName(itemID)} | ${RarityPvE}`)
 				let isBanned = false
-				if (config.useBSGStaticFleaBanlist) {
+				if (config.useBSGStaticFleaBanlist.enabled) {
 					isBanned = bsgBlacklist.includes(itemID)
 				} else {
 					isBanned = !item._props.CanSellOnRagfair
@@ -984,7 +984,7 @@ Weight: ${ammoProps.Weight}
 				if (config.HeadsetInfo.enabled) {
 					if (item._props.Distortion !== undefined) {
 						const gain = item._props.CompressorGain
-						const thresh = item._props.CompressorTreshold
+						const thresh = item._props.CompressorThreshold
 						// prettier-ignore
 						// headsetDescription = `${i18n.AmbientVolume}: ${item._props.AmbientCompressorSendLevel+10}dB | ${i18n.Compressor}: ${i18n.Gain} +${gain}dB × ${i18n.Treshold} ${thresh}dB ≈ ×${Math.abs((gain * (thresh+20)) / 10)} ${i18n.Boost} | ${i18n.ResonanceFilter}: ${item._props.HighpassResonance}@${item._props.HighpassFreq}Hz | ${i18n.Distortion}: ${Math.round(item._props.Distortion * 100)}%` + newLine + newLine;
 						headsetDescription = `${i18n.AmbientVolume}: ${Math.round(((item._props as any).AmbientCompressorSendLevel+10 + (item._props as any).EnvCommonCompressorSendLevel+7 + (item._props as any).EnvNatureCompressorSendLevel+5 + (item._props as any).EnvTechnicalCompressorSendLevel+7) * 10)/10}dB | ${i18n.Boost}: +${((gain + Math.abs(thresh+20)))}dB${item._props.Distortion ? ` | ${i18n.Distortion}: ${Math.round(item._props.Distortion * 100)}%` : ""}${newLine + newLine}`;
